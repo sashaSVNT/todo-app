@@ -1,9 +1,10 @@
-const input = document.querySelector('.to-do-item');
-const button = document.querySelector('.to-do-button');
+const input = document.querySelector('.to-do-input');
+const form = document.querySelector('.app-header');
 const todoList = document.querySelector('.to-do-list');
 
 
-button.addEventListener('click', (e) => {
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
   todoApp.add(input.value);
   input.value = '';
 })
@@ -11,18 +12,22 @@ button.addEventListener('click', (e) => {
 class TodoApp {
   list = [];
   id = 0;
-  createLayout(value, id) {
-    return `<div class="child-container" id="${id}">
-      <div class="child-text">${value}</div>
+  renderItems() {
+    const todoList = document.querySelector('.to-do-list');
+    todoList.innerHTML = ``;
+    this.list.forEach(elem => {
+      const { id, lable } = elem;
+      const node = document.createElement('div');
+      node.setAttribute('class', `child-container`);
+      node.setAttribute('id', `${id}`);
+      node.innerHTML = `
+      <div class="child-text">${lable}</div>
       <div class="child-buttons">
-        <button class="accept-button btn">
-          !
-        </button>
-        <button class="reject-button btn">
-          ×
-        </button>
-      </div>
-    </div>`
+        <button class="accept-button btn">!</button>
+        <button class="reject-button btn">×</button>
+      </div>`;
+      todoList.append(node);
+    });
   }
 
   initItem(lable) {
@@ -33,17 +38,19 @@ class TodoApp {
   }
 
   add(item) {
-    this.list.push(this.initItem(item));
-    this.render();
+    const node = this.initItem(item);
+    this.list.push(node);
+    this.renderItems();
   }
-  render() {
-    todoList.innerHTML = '';
-    this.list.forEach((item) => todoList.innerHTML += this.createLayout(item.lable, item.id));
 
-  }
   delete() {
-
+    const todoList = document.querySelector('.to-do-list');
+    todoList.addEventListener('click', (e) => {
+      console.log(e);
+    })
   }
+
 }
 
 const todoApp = new TodoApp();
+todoApp.delete();
