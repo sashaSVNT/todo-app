@@ -12,22 +12,22 @@ form.addEventListener('submit', (e) => {
 class TodoApp {
   list = [];
   id = 0;
-  renderItems() {
-    const todoList = document.querySelector('.to-do-list');
+  render() {
     todoList.innerHTML = ``;
-    this.list.forEach(elem => {
-      const { id, lable } = elem;
-      const node = document.createElement('div');
-      node.setAttribute('class', `child-container`);
-      node.setAttribute('id', `${id}`);
-      node.innerHTML = `
-      <div class="child-text">${lable}</div>
-      <div class="child-buttons">
-        <button class="accept-button btn">!</button>
-        <button class="reject-button btn">×</button>
-      </div>`;
-      todoList.append(node);
-    });
+    this.list.forEach(elem => this.renderItem(elem));
+  }
+
+  renderItem({ id, lable }) {
+    const node = document.createElement('li');
+    node.setAttribute('class', `child-container`);
+    node.setAttribute('id', id);
+    node.innerHTML = `
+    <div class="child-text">${lable}</div>
+    <div class="child-buttons">
+      <button class="accept-button btn">!</button>
+      <button class="reject-button btn">×</button>
+    </div>`;
+    todoList.append(node);
   }
 
   initItem(lable) {
@@ -40,17 +40,20 @@ class TodoApp {
   add(item) {
     const node = this.initItem(item);
     this.list.push(node);
-    this.renderItems();
+    this.render();
   }
 
-  delete() {
-    const todoList = document.querySelector('.to-do-list');
-    todoList.addEventListener('click', (e) => {
-      console.log(e);
-    })
+  delete(id) {
+    this.list = this.list.filter((item) => item.id !== Number(id));
+    this.render();
   }
-
 }
 
 const todoApp = new TodoApp();
-todoApp.delete();
+
+todoList.addEventListener('click', (e) => {
+  if (e.target.classList.contains('reject-button')) {
+    const itemId = e.target.closest('.child-container').id;
+    todoApp.delete(itemId)
+  }
+})
